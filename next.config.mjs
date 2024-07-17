@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	experimental: {
-		appDir: true,
+		// appDir: true, // Commented out to avoid the unrecognized key error
 		serverComponentsExternalPackages: ["mongoose"],
 	},
 	images: {
