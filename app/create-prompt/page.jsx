@@ -12,6 +12,7 @@ const CreatePrompt = () => {
 	const [submitting, setSubmitting] = useState(false)
 	const [post, setPost] = useState({ prompt: "", tag: "" })
 	const addPost = useStore(state => state.addPost)
+	const fetchPosts = useStore(state => state.fetchPosts)
 
 	const createPrompt = async e => {
 		e.preventDefault()
@@ -25,6 +26,7 @@ const CreatePrompt = () => {
 			})
 
 			setPost({ prompt: "", tag: "" })
+			await fetchPosts()
 			router.push("/")
 		} catch (error) {
 			console.error(error)

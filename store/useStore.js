@@ -3,7 +3,11 @@ import { create } from "zustand"
 const useStore = create(set => ({
 	posts: [],
 	fetchPosts: async () => {
-		const response = await fetch("/api/prompt")
+		const response = await fetch("/api/prompt", {
+			headers: {
+				"Cache-Control": "no-store",
+			},
+		})
 		const data = await response.json()
 		set({ posts: data })
 	},
@@ -18,6 +22,8 @@ const useStore = create(set => ({
 		if (response.ok) {
 			const data = await response.json()
 			set(state => ({ posts: [data, ...state.posts] }))
+			// Refetch posts to ensure freshness
+			await set().fetchPosts()
 		}
 	},
 }))
