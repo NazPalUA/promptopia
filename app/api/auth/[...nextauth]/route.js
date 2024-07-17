@@ -35,16 +35,21 @@ const handler = NextAuth({
 	},
 	callbacks: {
 		async session({ session }) {
-			// store the user id from MongoDB to session
-			const sessionUser = await User.findOne({ email: session.user.email })
-			session.user.id = sessionUser._id.toString()
-			return session
-		},
-		async signIn({ account, profile, user, credentials }) {
+			console.log("Session callback triggered")
 			try {
 				await connectToDB()
-
-				// Sanitize the username
+				const sessionUser = await User.findOne({ email: session.user.email })
+				session.user.id = sessionUser._id.toString()
+				return session
+			} catch (error) {
+				console.error("Error in session callback:", error)
+				return session // Return session even if there is an error
+			}
+		},
+		async signIn({ account, profile, user, credentials }) {
+			console.log("SignIn callback triggered")
+			try {
+				await connectToDB()
 				const sanitizedUsername = sanitizeUsername(
 					profile.name.replace(" ", "").toLowerCase()
 				)
@@ -52,7 +57,6 @@ const handler = NextAuth({
 				// check if user already exists
 				const userExists = await User.findOne({ email: profile.email })
 
-				// if not, create a new document and save user in MongoDB
 				if (!userExists) {
 					await User.create({
 						email: profile.email,
@@ -63,7 +67,7 @@ const handler = NextAuth({
 
 				return true
 			} catch (error) {
-				console.log("Error checking if user exists: ", error.message)
+				console.log("Error in signIn callback:", error.message)
 				return false
 			}
 		},
