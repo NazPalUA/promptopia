@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-const useStore = create(set => ({
+const useStore = create((set, get) => ({
 	posts: [],
 	fetchPosts: async () => {
 		console.log("Fetching posts")
@@ -32,7 +32,7 @@ const useStore = create(set => ({
 				set(state => ({ posts: [data, ...state.posts] }))
 				console.log("Added post:", data)
 				// Refetch posts to ensure freshness
-				await set().fetchPosts()
+				await get().fetchPosts()
 			} else {
 				console.error("Failed to add post:", await response.text())
 			}
