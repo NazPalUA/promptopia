@@ -1,5 +1,6 @@
 import User from "@models/user"
 import { connectToDB } from "@utils/database"
+import sanitizeUsername from "@utils/sanitizeUsername" // Import the utility function
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 
@@ -11,6 +12,11 @@ const handler = NextAuth({
 		GoogleProvider({
 			clientId: process.env.GOOGLE_ID,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+			authorization: {
+				params: {
+					scope: "openid email profile",
+				},
+			},
 		}),
 	],
 	session: {
@@ -43,7 +49,7 @@ const handler = NextAuth({
 					profile.name.replace(" ", "").toLowerCase()
 				)
 
-				//  check if user already exists
+				// check if user already exists
 				const userExists = await User.findOne({ email: profile.email })
 
 				// if not, create a new document and save user in MongoDB
