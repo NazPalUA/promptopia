@@ -25,6 +25,8 @@ const Feed = () => {
 	const [searchTimeout, setSearchTimeout] = useState(null)
 	const [searchedResults, setSearchedResults] = useState([])
 
+	console.log("Feed component render", { fetchPosts, allPosts })
+
 	useEffect(() => {
 		fetchPosts()
 	}, [fetchPosts])
