@@ -1,8 +1,10 @@
+import User from "@models/user"
+import { connectToDB } from "@utils/database"
 import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 
-import User from "@models/user"
-import { connectToDB } from "@utils/database"
+const isProduction =
+	process.env.NEXTAUTH_URL && !process.env.NEXTAUTH_URL.includes("localhost")
 
 const handler = NextAuth({
 	providers: [
@@ -11,12 +13,25 @@ const handler = NextAuth({
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
 		}),
 	],
+	session: {
+		strategy: "jwt",
+	},
+	cookies: {
+		sessionToken: {
+			name: `__Secure-next-auth.session-token`,
+			options: {
+				httpOnly: true,
+				sameSite: "lax",
+				path: "/",
+				secure: isProduction,
+			},
+		},
+	},
 	callbacks: {
 		async session({ session }) {
 			// store the user id from MongoDB to session
 			const sessionUser = await User.findOne({ email: session.user.email })
 			session.user.id = sessionUser._id.toString()
-
 			return session
 		},
 		async signIn({ account, profile, user, credentials }) {
