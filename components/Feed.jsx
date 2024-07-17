@@ -1,7 +1,7 @@
 "use client"
 
+import useStore from "@store/useStore"
 import { useEffect, useState } from "react"
-
 import PromptCard from "./PromptCard"
 
 const PromptCardList = ({ data, handleTagClick }) => {
@@ -19,23 +19,15 @@ const PromptCardList = ({ data, handleTagClick }) => {
 }
 
 const Feed = () => {
-	const [allPosts, setAllPosts] = useState([])
-
-	// Search states
+	const fetchPosts = useStore(state => state.fetchPosts)
+	const allPosts = useStore(state => state.posts)
 	const [searchText, setSearchText] = useState("")
 	const [searchTimeout, setSearchTimeout] = useState(null)
 	const [searchedResults, setSearchedResults] = useState([])
 
-	const fetchPosts = async () => {
-		const response = await fetch("/api/prompt")
-		const data = await response.json()
-
-		setAllPosts(data)
-	}
-
 	useEffect(() => {
 		fetchPosts()
-	}, [])
+	}, [fetchPosts])
 
 	const filterPrompts = searchtext => {
 		const regex = new RegExp(searchtext, "i") // 'i' flag for case-insensitive search
@@ -62,7 +54,6 @@ const Feed = () => {
 
 	const handleTagClick = tagName => {
 		setSearchText(tagName)
-
 		const searchResult = filterPrompts(tagName)
 		setSearchedResults(searchResult)
 	}
@@ -80,7 +71,6 @@ const Feed = () => {
 				/>
 			</form>
 
-			{/* All Prompts */}
 			{searchText ? (
 				<PromptCardList
 					data={searchedResults}
