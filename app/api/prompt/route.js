@@ -2,6 +2,7 @@ import Prompt from "@models/prompt"
 import { connectToDB } from "@utils/database"
 
 export const fetchCache = "force-no-store"
+export const dynamic = "force-dynamic" // defaults to auto
 
 export const GET = async request => {
 	try {
