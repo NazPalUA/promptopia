@@ -1,8 +1,7 @@
 import Prompt from "@models/prompt"
 import { connectToDB } from "@utils/database"
 
-export const fetchCache = "force-no-store"
-export const dynamic = "force-dynamic" // defaults to auto
+export const dynamic = "force-dynamic"
 
 export const GET = async request => {
 	try {
@@ -10,18 +9,8 @@ export const GET = async request => {
 
 		const prompts = await Prompt.find({}).populate("creator")
 
-		return new Response(JSON.stringify(prompts), {
-			status: 200,
-			headers: {
-				"Cache-Control": "no-store",
-			},
-		})
+		return new Response(JSON.stringify(prompts), { status: 200 })
 	} catch (error) {
-		return new Response("Failed to fetch all prompts", {
-			status: 500,
-			headers: {
-				"Cache-Control": "no-store",
-			},
-		})
+		return new Response("Failed to fetch all prompts", { status: 500 })
 	}
 }
