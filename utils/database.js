@@ -1,24 +1,22 @@
 import mongoose from "mongoose"
 
-let isConnected = false // track the connection
+const MONGODB_URI = process.env.MONGODB_URI
+
+let cached = global.mongoose || { conn: null, promise: null }
 
 export const connectToDB = async () => {
-	mongoose.set("strictQuery", true)
+	if (cached.conn) return cached.conn
 
-	if (isConnected) {
-		console.log("MongoDB is already connected")
-		return
-	}
+	if (!MONGODB_URI) throw new Error("MONGODB_URI is missing")
 
-	try {
-		await mongoose.connect(process.env.MONGODB_URI, {
-			dbName: "share_prompt",
+	cached.promise =
+		cached.promise ||
+		mongoose.connect(MONGODB_URI, {
+			dbName: "evently",
+			bufferCommands: false,
 		})
 
-		isConnected = true
+	cached.conn = await cached.promise
 
-		console.log("MongoDB connected")
-	} catch (error) {
-		console.log("MongoDB connection error:", error)
-	}
+	return cached.conn
 }
