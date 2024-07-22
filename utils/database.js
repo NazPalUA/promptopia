@@ -12,7 +12,7 @@ export const connectToDB = async () => {
 	cached.promise =
 		cached.promise ||
 		mongoose.connect(MONGODB_URI, {
-			dbName: "evently",
+			dbName: "share_prompt",
 			bufferCommands: false,
 		})
 
